@@ -1,0 +1,650 @@
+Con bảo ba con là đi như nào đi
+Tài thật nt ko bao h fdc
+Mẹ uống j ạ
+Vừa đá
+Cốc của mẹ ạ
+Gọi điện cho ông ngoại đi các con
+Vâng ạ
+Nâud cơm đi con
+Hỏi ba hqua cái sườn ba để đâu
+Con đang chơi dở ạ
+Ok
+Nốt đi
+Alo
+Con dậy chưa
+Đây ạ
+Ok. Để mẹ còn đi ngủ
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Football Ultimate</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    background:#07101b;
+    color:white;
+    font-family:Arial,sans-serif;
+    overflow:hidden;
+}
+
+#app{
+    width:100vw;
+    height:100vh;
+}
+
+button{
+    border:0;
+    border-radius:10px;
+    padding:12px 20px;
+    background:#1677ff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    filter:brightness(1.2);
+}
+
+/* START */
+
+#start{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:
+        radial-gradient(circle at center,#12345c,#050911 65%);
+}
+
+.logo{
+    font-size:64px;
+    font-weight:900;
+    letter-spacing:4px;
+    margin-bottom:30px;
+}
+
+.subtitle{
+    opacity:.7;
+    margin-bottom:35px;
+}
+
+/* GAME */
+
+#game{
+    display:none;
+    width:100%;
+    height:100%;
+}
+
+.sidebar{
+    width:240px;
+    height:100%;
+    position:fixed;
+    left:0;
+    top:0;
+    background:#0b1422;
+    border-right:1px solid #22324a;
+    padding:20px;
+}
+
+.sidebar h2{
+    margin-bottom:25px;
+}
+
+.nav{
+    display:block;
+    width:100%;
+    text-align:left;
+    margin:8px 0;
+    background:#101e30;
+}
+
+.content{
+    margin-left:240px;
+    height:100%;
+    padding:25px;
+    overflow:auto;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+/* CARDS */
+
+.cards{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+}
+
+.card{
+    width:180px;
+    min-height:270px;
+    border-radius:18px;
+    padding:12px;
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(145deg,#172236,#080d16);
+    border:2px solid var(--card-color);
+    box-shadow:0 0 20px color-mix(in srgb,var(--card-color),transparent 55%);
+}
+
+.card img{
+    width:100%;
+    height:145px;
+    object-fit:cover;
+    border-radius:12px;
+    background:#202a38;
+}
+
+.card .ovr{
+    font-size:32px;
+    font-weight:900;
+}
+
+.card .season{
+    color:var(--card-color);
+    font-weight:bold;
+}
+
+.card .name{
+    font-size:18px;
+    margin:5px 0;
+}
+
+/* MATCH */
+
+#match{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#071b0d;
+}
+
+#pitch{
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+.controls{
+    position:absolute;
+    left:20px;
+    bottom:20px;
+    padding:15px;
+    border-radius:14px;
+    background:rgba(0,0,0,.65);
+}
+
+.controls span{
+    display:inline-block;
+    margin:4px;
+    padding:7px 10px;
+    background:#182638;
+    border-radius:7px;
+}
+
+.matchInfo{
+    position:absolute;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:12px 25px;
+    background:rgba(0,0,0,.7);
+    border-radius:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<!-- START -->
+
+<section id="start">
+
+    <div class="logo">FOOTBALL ULTIMATE</div>
+
+    <div class="subtitle">
+</select>
+
+            <br><br>
+
+            <label>
+                Phòng thủ
+            </label>
+
+            <select>
+                <option>Cân bằng</option>
+                <option>Pressing</option>
+                <option>Lùi sâu</option>
+            </select>
+
+        </div>
+
+    </main>
+
+</section>
+
+
+<!-- MATCH -->
+
+<section id="match">
+
+    <canvas id="pitch"></canvas>
+
+    <div class="matchInfo">
+        FOOTBALL ULTIMATE
+        <span id="score">0 - 0</span>
+    </div>
+
+    <div class="controls">
+
+        <span>↑ ↓ ← → Di chuyển</span>
+        <span>E Tăng tốc</span>
+        <span>D Sút</span>
+        <span>S Chuyền ngắn</span>
+        <span>A Tạt</span>
+        <span>AA Tạt sệt</span>
+        <span>SPACE Tắc</span>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   GAME DATA
+========================================= */
+
+const SEASONS = [
+
+"BASE",
+"TOTY_2026",
+"TOTS_2026",
+"UCL",
+"UEL",
+"WC",
+"EURO",
+"COPA",
+"ICON",
+"HERO",
+"LEGEND",
+"GOLDEN_BOY",
+"RISING_STAR",
+"MVP",
+"CAPTAIN",
+"RECORD",
+"FLASHBACK",
+"PRIME",
+"PEAK",
+"FANTASY",
+"CHAMPION",
+"FINALS",
+"DERBY",
+"CLUB_HERO",
+"NATIONAL_HERO",
+"PLAYMAKER",
+"GOAL_MACHINE",
+"DEFENDER",
+"KEEPER",
+"SPEED",
+"TECHNICIAN",
+"POWER",
+"FINISHER",
+"PASS_MASTER",
+"DRIBBLE_MASTER",
+"WALL",
+"BIG_GAME",
+"COMEBACK",
+"YOUNG_STAR",
+"VETERAN",
+"ALL_STAR",
+"WORLD_STAR",
+"SUPERSTAR",
+"GALAXY",
+"IMMORTAL",
+"LEGACY",
+"GOAT",
+"ULTIMATE",
+"MYTHIC",
+"ETERNAL"
+
+];
+
+
+/* =========================================
+   SEASON STYLE
+========================================= */
+
+const SEASON_COLORS = {
+
+BASE:"#d8d8d8",
+TOTY_2026:"#55dfff",
+TOTS_2026:"#805cff",
+UCL:"#2877ff",
+UEL:"#ff6a00",
+WC:"#38d6b2",
+EURO:"#4778ff",
+COPA:"#e9b84b",
+ICON:"#ffd36a",
+HERO:"#ff8a4c",
+LEGEND:"#c8a45d",
+GOLDEN_BOY:"#ffe15a",
+RISING_STAR:"#66eaff",
+MVP:"#ffca28",
+CAPTAIN:"#d7d7d7",
+RECORD:"#ff4d4d",
+FLASHBACK:"#9b8cff",
+PRIME:"#f4c95d",
+PEAK:"#ff8f5c",
+FANTASY:"#c96cff",
+CHAMPION:"#f6d365",
+FINALS:"#ff5b78",
+DERBY:"#7de35f",
+CLUB_HERO:"#55b7ff",
+NATIONAL_HERO:"#4effa5",
+PLAYMAKER:"#49c5ff",
+GOAL_MACHINE:"#ff5353",
+DEFENDER:"#4f88ff",
+KEEPER:"#4bd4b2",
+SPEED:"#66eaff",
+TECHNICIAN:"#c16cff",
+POWER:"#ff633d",
+FINISHER:"#ffb347",
+PASS_MASTER:"#58c9ff",
+DRIBBLE_MASTER:"#d66cff",
+WALL:"#5577aa",
+BIG_GAME:"#ffd45c",
+COMEBACK:"#66ff8b",
+YOUNG_STAR:"#7cffdb",
+VETERAN:"#aaa",
+ALL_STAR:"#fff",
+WORLD_STAR:"#68aaff",
+SUPERSTAR:"#ffdc5c",
+GALAXY:"#b56cff",
+IMMORTAL:"#f0f0f0",
+LEGACY:"#d2a85b",
+GOAT:"#ffe25c",
+ULTIMATE:"#ff4dff",
+MYTHIC:"#9c5cff",
+ETERNAL:"#ffffff"
+
+};
+
+
+/* =========================================
+   PLAYERS
+========================================= */
+
+const PLAYERS = [
+
+{
+    id:"messi",
+    name:"Lionel Messi",
+    nation:"Argentina",
+    position:"RW",
+    ovr:95,
+    image:"images/players/messi.jpg"
+},
+
+{
+    id:"ronaldo",
+    name:"Cristiano Ronaldo",
+    nation:"Portugal",
+    position:"ST",
+    ovr:96,
+    image:"images/players/ronaldo.jpg"
+},
+Build your team. Upgrade your cards. Become the champion.
+    </div>
+
+    <button onclick="startGame()">
+        BẮT ĐẦU GAME
+    </button>
+
+</section>
+
+
+<!-- GAME -->
+
+<section id="game">
+
+    <aside class="sidebar">
+
+        <h2>⚽ FOOTBALL</h2>
+
+        <button class="nav" onclick="showPage('home')">
+            🏠 Sảnh
+        </button>
+
+        <button class="nav" onclick="showPage('squad')">
+            👥 Đội hình
+        </button>
+
+        <button class="nav" onclick="showPage('cards')">
+            🃏 Kho thẻ
+        </button>
+
+        <button class="nav" onclick="showPage('market')">
+            💰 TTCN
+        </button>
+
+        <button class="nav" onclick="showPage('tactics')">
+            ⚙️ Chiến thuật
+        </button>
+
+        <button class="nav" onclick="startMatch()">
+            ⚽ Đá trận
+        </button>
+
+    </aside>
+
+
+    <main class="content">
+
+        <!-- HOME -->
+
+        <div id="home" class="page active">
+
+            <h1>Chào mừng đến Football Ultimate</h1>
+
+            <br>
+
+            <h2 id="clubName">
+                Chưa chọn CLB
+            </h2>
+
+            <br>
+
+            <p>
+                Coins:
+                <b id="coins">2,000,000</b>
+            </p>
+
+            <p>
+                Gems:
+                <b id="gems">500</b>
+            </p>
+
+            <br>
+
+            <button onclick="chooseClub('Real Madrid')">
+                Real Madrid
+            </button>
+
+            <button onclick="chooseClub('Barcelona')">
+                Barcelona
+            </button>
+
+            <button onclick="chooseClub('Manchester City')">
+                Manchester City
+            </button>
+
+            <button onclick="chooseClub('PSG')">
+                PSG
+            </button>
+
+        </div>
+
+
+        <!-- SQUAD -->
+
+        <div id="squad" class="page">
+
+            <h1>Đội hình</h1>
+
+            <br>
+
+            <div id="squadList" class="cards"></div>
+
+        </div>
+
+
+        <!-- CARDS -->
+
+        <div id="cards" class="page">
+
+            <h1>Kho thẻ</h1>
+
+            <br>
+
+            <div id="cardList" class="cards"></div>
+
+        </div>
+
+
+        <!-- MARKET -->
+
+        <div id="market" class="page">
+
+            <h1>Thị trường chuyển nhượng</h1>
+
+            <br>
+
+            <div id="marketList" class="cards"></div>
+
+        </div>
+
+
+        <!-- TACTICS -->
+
+        <div id="tactics" class="page">
+
+            <h1>Chiến thuật</h1>
+
+            <br>
+
+            <select id="formation">
+
+                <option>4-3-3</option>
+                <option>4-2-3-1</option>
+                <option>4-4-2</option>
+                <option>3-5-2</option>
+
+            </select>
+
+            <br><br>
+
+            <label>
+                Tấn công
+            </label>
+
+            <select>
+                <option>Cân bằng</option>
+                <option>Kiểm soát</option>
+                <option>Phản công</option>
+{
+    id:"mbappe",
+    name:"Kylian Mbappé",
+    nation:"France",
+    position:"ST",
+    ovr:94,
+    image:"images/players/mbappe.jpg"
+},
+
+{
+    id:"haaland",
+    name:"Erling Haaland",
+    nation:"Norway",
+    position:"ST",
+    ovr:95,
+    image:"images/players/haaland.jpg"
+},
+
+{
+    id:"vinicius",
+    name:"Vinícius Jr.",
+    nation:"Brazil",
+    position:"LW",
+    ovr:93,
+    image:"images/players/vinicius.jpg"
+},
+
+{
+    id:"bellingham",
+    name:"Jude Bellingham",
+    nation:"England",
+    position:"CAM",
+    ovr:92,
+    image:"images/players/bellingham.jpg"
+},
+
+{
+    id:"salah",
+    name:"Mohamed Salah",
+    nation:"Egypt",
+    position:"RW",
+    ovr:91,
+    image:"images/players/salah.jpg"
+},
+
+{
+    id:"rodri",
+    name:"Rodri",
+    nation:"Spain",
+    position:"CDM",
+    ovr:93,
+    image:"images/players/rodri.jpg"
+}
+
+];
+
+
+/* =========================================
+   PLAYER CARDS
+========================================= */
+
+let CARDS = [];
+
+PLAYERS.forEach(player => {
+
+    SEASONS.forEach((season,index) => {
+
+        CARDS.push({
+
+            id:
+                player.id +
+                "_" +
+                season,
